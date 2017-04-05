@@ -40,7 +40,7 @@
   \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
     \put(\LenToUnit{#1\paperwidth},\LenToUnit{#2\paperheight}){\vtop{{\null}\makebox[0pt][c]{#3}}}%
   }%
-}%
+}
 
 \makeatletter
 \DeclareRobustCommand\njet{\@ifnextchar[{\@@njet}{\@njet}}
@@ -203,10 +203,60 @@ for (std::vector<int>::iterator it  = vec.begin,
 
 % ===================================================================
 
-\frame{\frametitle{$\lambda$ functions}
+\begin{frame}[fragile=singleslide]
+\frametitle{$\lambda$ functions}
+  \toplink{http://en.cppreference.com/w/cpp/language/lambda}
+  
+\begin{itemize}
+    \item Write functions inline!
+    \item Great with standard algorithms like \texttt{std::sort},
+          \texttt{std::accumulate}, etc.
+\end{itemize}
+
+\vspace{10mm}
+
+Example: find distribution with highest mean
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::vector<TH1D*> hists;
+. . .
+auto highest_mean = *std::max_element(
+  hists.begin(), hists.end(), [](auto h, auto i) {
+    return h->GetMean() < i->GetMean();
+  }
+);
+\end{minted}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{$\lambda$ functions}
   \toplink{http://en.cppreference.com/w/cpp/language/lambda}
 
-}
+\begin{itemize}
+  \item Capture variables from the environment in the \texttt{[]}.
+\end{itemize}
+
+\vspace{10mm}
+
+Example: sort functions by their maxima or minima
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::vector<TF1*> funcs;
+bool sort_on_max;
+. . .
+std::sort(
+  funcs.begin(), funcs.end(), [sort_on_max](auto f, auto g) {
+    double f_max = f->GetMaximum(),
+           g_max = g->GetMaximum();
+    return sort_on_max ? f_max < g_max : g_max < f_max;
+  }
+);
+\end{minted}
+
+\end{frame}
 
 % ===================================================================
 % https://www.sharelatex.com/learn/Code_Highlighting_with_minted
