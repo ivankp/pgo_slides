@@ -12,6 +12,8 @@
 
 \let\Tiny=\tiny
 
+\usefonttheme[onlymath]{serif}
+
 \definecolor{bashkey}{HTML}{C4A000}
 \definecolor{bashval}{HTML}{75507B}
 \definecolor{bashvar}{HTML}{06989A}
@@ -60,7 +62,7 @@
 
 \author{Sam Marinelli, Ivan Pogrebnyak}
 \begin{document}
-\title{Better Data Analysis with Modern C++\\ Know Your Tools}
+\title{Better Data Analysis with Modern \texttt{C++}\\ Know Your Tools}
 \date{April 6, 2017}
 
 % ===================================================================
@@ -78,7 +80,7 @@
 
 % ===================================================================
 
-\frame{\frametitle{Modern C++}
+\frame{\frametitle{Modern \texttt{C++}}
   \vspace{-5mm}
   \begin{itemize}
     \item More expressive
@@ -122,6 +124,9 @@
 }
 
 % ===================================================================
+\newlength{\defaultlmii}
+\setlength{\defaultlmii}{\leftmarginii}
+\setlength{\leftmarginii}{12pt}
 
 \frame{\frametitle{Get a new compiler}
   \begin{itemize}
@@ -142,6 +147,7 @@
   \end{itemize}
 }
 
+\setlength{\leftmarginii}{\defaultlmii}
 % ===================================================================
 
 \frame{\frametitle{$\lambda$ functions}
@@ -202,6 +208,53 @@ template <typename... TT>
 inline std::string cat(TT&&... xx) {
   std::stringstream ss;
   cat_impl(ss,std::forward<TT>(xx)...);
+  return ss.str();
+}
+\end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Variadic templates}
+  \toplink{http://en.cppreference.com/w/cpp/language/parameter_pack}
+
+\vspace{-5mm}
+Example 1:
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+cout << cat("char_array",' ',5,' ',std::fixed,std::setprecision(2),4.2)
+     << endl; // char_array 5 4.20
+\end{minted}
+
+\vspace{3mm}
+Example 2:
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+TFile file("file.root");
+std::string name("jet2_pT");
+TH1 *hist = dynamic_cast<TH1*>(file->Get(name.c_str()));
+
+if (!hist) throw std::runtime_error(cat(
+  name," histogram does not exists in file ",file.GetName()));
+
+if (hist->GetEntries()==0) throw std::runtime_error(cat(
+  hist->GetName()," histogram is empty"));
+\end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{\texttt{C++17} fold expressions}
+  \toplink{http://en.cppreference.com/w/cpp/language/fold}
+
+\vspace{-5mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+template <typename... Args>
+inline std::string cat(Args&&... args) {
+  std::stringstream ss;
+  (ss << ... << args); // fold expression
   return ss.str();
 }
 \end{minted}
