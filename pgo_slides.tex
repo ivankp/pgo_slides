@@ -294,20 +294,20 @@ double hypotenuse = std::sqrt(sq(3.,4.)); // 5
 #include <sstream>
 
 template <typename S, typename T>
-inline void cat_impl(S& ss, T&& x) {
-  ss << std::forward<T>(x);
+inline void cat_impl(S& ss, const T& x) {
+  ss << x;
 }
 
 template <typename S, typename T, typename... TT>
-inline void cat_impl(S& ss, T&& x, TT&&... xx) {
-  ss << std::forward<T>(x);
-  cat_impl(ss,std::forward<TT>(xx)...);
+inline void cat_impl(S& ss, const T& x, const TT&... xx) {
+  ss << x;
+  cat_impl(ss,xx...);
 }
 
 template <typename... TT>
-inline std::string cat(TT&&... xx) {
+inline std::string cat(const TT&... xx) {
   std::stringstream ss;
-  cat_impl(ss,std::forward<TT>(xx)...);
+  cat_impl(ss,xx...);
   return ss.str();
 }
 \end{minted}
@@ -357,12 +357,28 @@ for (int j : {1,2,3}) {
 \vspace{-5mm}
 \begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
 template <typename... Args>
-inline std::string cat(Args&&... args) {
+inline std::string cat(const Args&... args) {
   std::stringstream ss;
   (ss << ... << args); // fold expression
   return ss.str();
 }
 \end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Random-number generators}
+  \toplink{http://en.cppreference.com/w/cpp/numeric/random}
+
+\begin{itemize}
+  \item New \texttt{random} header provides several pseudorandom-number
+        generators and
+        20 commonly used distributions, including many not implemented in
+        ROOT, such as Bernoulli, negative-binomial, $\gamma$, etc.
+  
+\end{itemize}
+
 \end{frame}
 
 % ===================================================================
