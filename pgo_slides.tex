@@ -18,6 +18,7 @@
 \definecolor{bashval}{HTML}{75507B}
 \definecolor{bashvar}{HTML}{06989A}
 \definecolor{termdir}{HTML}{729CCF}
+\definecolor{cpptype}{HTML}{008000}
 
 \newcommand{\ttc}[2]{\textcolor{#1}{\texttt{#2}}}
 
@@ -403,12 +404,143 @@ for (std::size_t i = 0; i < 1'000'000; ++i) {
 \vspace{-5mm}
 \begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
 struct point { double x, y; }; // local class
-std::vector<point> {
+std::vector<point> points {
   {0.1, 0.3},
   {3.1, 4,7},
   {55., 34.}
 };
+
+for (const auto& p : points)
+  cout << '(' << p.x << ',' << p.y << ')' << endl;
 \end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{\ttc{cpptype}{auto} and \ttc{cpptype}{decltype}}
+  \toplink{http://en.cppreference.com/w/cpp/language/decltype}
+
+\vspace{-5mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::vector<some_very_useful_but_very_long_type> vec;
+
+auto it = vec.begin();
+
+decltype(*it) x;
+\end{minted}
+
+\begin{itemize}
+  \item The type of \texttt{it} is
+    \texttt{std::vector<some\_very\_useful\_but\_very\_long\_type>::iterator};
+  \item The type of \texttt{x} is
+    \texttt{some\_very\_useful\_but\_very\_long\_type};
+\end{itemize}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Regular expressions}
+  \toplink{http://en.cppreference.com/w/cpp/regex}
+
+\vspace{-5mm}
+
+Suppose you have histograms with name like
+\begin{itemize}
+  \footnotesize
+  \item \texttt{jet1\_pT}
+  \item \texttt{jet2\_pT}
+  \item \texttt{jet1\_rapidity}
+  \item \texttt{lepton2\_rapidity}
+  \item \texttt{higgs\_pT}
+  \item \texttt{higgs\_mass}
+\end{itemize}
+\vspace{3mm}
+
+but you want to do something for only jet and Higgs pT histograms.
+
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::regex re("(jet[0-9]|higgs)_pT");
+for (TH1* h : hists) {
+  if (std::regex_match( h->GetName(), re )) {
+    . . . // Do something
+  }
+}
+\end{minted}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{\texttt{<array>}}
+
+\vspace{-5mm}
+
+\texttt{std::array} is like \texttt{std::vector}, but statically allocated and
+with the size a part of its type.
+
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+using p4 = std::array<double,4>; // can use it to represent 4-momentum
+std::vector<p4> particles; // will be contiguously allocated
+\end{minted}
+
+Other similar aggregate templates (statically allocated containers):
+\begin{itemize}
+  \item \texttt{std::pair<T1,T2>} -- 2 heterogenious types
+    \href{http://en.cppreference.com/w/cpp/utility/pair}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+  \item \texttt{std::tuple<Ts...>} -- $n$ heterogenious types
+    \href{http://en.cppreference.com/w/cpp/utility/tuple}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+  \item \texttt{std::array<T,N>} -- $n$ homogenious types
+    \href{http://en.cppreference.com/w/cpp/container/array}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+\end{itemize}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{An analysis example}
+  \toplink{https://github.com/ivankp/pgo_cxx/blob/master/src/analysis.cc}
+
+\begin{itemize}
+  \item An example of analysis code, reading a \texttt{TTree} from a ROOT file,
+    making histograms of particle's transverse momentum for different types of
+    events.
+  \item Example of using \texttt{std::unordered\_map} and a timed counter based
+    on \texttt{C++11} \texttt{<chrono>}.
+  \item Also uses other previously discussed features.
+\end{itemize}
+
+\begin{center}
+  \href{https://github.com/ivankp/pgo_cxx/blob/master/src/analysis.cc}
+  {Link to the code}
+\end{center}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{A fitting example}
+  \toplink{https://github.com/ivankp/pgo_cxx/blob/master/src/minuit.cc}
+
+\begin{itemize}
+  \item An example of fitting code, using lambda functions with \texttt{TMinuit}.
+  \item The
+    \href{https://github.com/ivankp/pgo_cxx/blob/master/include/minuit.hh}{wrapper}
+    for \texttt{TMinuit} also demonstrates other modern \texttt{C++} features.
+\end{itemize}
+
+\begin{center}
+  \href{https://github.com/ivankp/pgo_cxx/blob/master/src/minuit.cc}
+  {Link to the code}
+\end{center}
+
 \end{frame}
 
 % ===================================================================
