@@ -213,8 +213,6 @@ for (std::vector<int>::iterator it  = vec.begin,
           \texttt{std::accumulate}, etc.
 \end{itemize}
 
-\vspace{10mm}
-
 Example: find distribution with highest mean
 \vspace{-3mm}
 \begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
@@ -239,19 +237,17 @@ auto highest_mean = *std::max_element(
   \item Capture variables from the environment in the \texttt{[]}.
 \end{itemize}
 
-\vspace{10mm}
-
 Example: sort functions by their maxima or minima
 \vspace{-3mm}
 \begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
 std::vector<TF1*> funcs;
-bool sort_on_max;
+bool ascending;
 . . .
 std::sort(
-  funcs.begin(), funcs.end(), [sort_on_max](auto f, auto g) {
+  funcs.begin(), funcs.end(), [ascending](auto f, auto g) {
     double f_max = f->GetMaximum(),
            g_max = g->GetMaximum();
-    return sort_on_max ? f_max < g_max : g_max < f_max;
+    return ascending ^ g_max < f_max;
   }
 );
 \end{minted}
@@ -371,6 +367,36 @@ inline std::string cat(Args&&... args) {
 % ===================================================================
 
 \begin{frame}[fragile=singleslide]
+\frametitle{Smart pointers}
+  \toplink{http://en.cppreference.com/w/cpp/memory}
+
+\begin{itemize}
+  \item These own dynamically allocated memory and clean it up automatically
+        (\texttt{delete} called on destruction of pointer).
+\end{itemize}
+
+Example: distribution of a sample mean
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::random_device device;
+std::mt19937 engine(device());
+std::uniform_real_distribution<double> dist;
+
+TH1::AddDirectory(false);
+auto sample_mean = std::make_unique<TH1D>("sample_mean", "", 100, 0.0,
+                                          1.0);
+for (std::size_t i = 0; i < 1'000'000; ++i) {
+  auto sample = std::make_unique<TH1D>("sample", "", 100, 0.0, 1.0);
+  for (std::size_t j = 0; j < 10; ++j) sample->Fill(dist(engine));
+  sample_mean->Fill(sample->GetMean());
+}
+\end{minted}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
 \frametitle{Uniform initialization}
   \toplink{http://en.cppreference.com/w/cpp/language/aggregate_initialization}
 
@@ -383,6 +409,33 @@ std::vector<point> {
   {55., 34.}
 };
 \end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Move semantics}
+  \toplink{http://en.cppreference.com/w/cpp/language/move_constructor}
+
+\begin{itemize}
+  \item Prevents unnecessary copying of dynamically allocated memory.
+  \item Compiling with \texttt{-std=c++11} or later turns these on
+        automatically in the standard library.
+\end{itemize}
+
+Example: return a \texttt{std::vector} from a function
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::vector<double> sample_dist(std::size_t n_samples) {
+  . . .
+}
+
+int main() {
+  auto samples = sample_dist(1000000);
+  . . .
+}
+\end{minted}
+
 \end{frame}
 
 % ===================================================================
