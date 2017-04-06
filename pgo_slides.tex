@@ -327,11 +327,59 @@ inline std::string cat(Args&&... args) {
 \vspace{-5mm}
 \begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
 struct point { double x, y; }; // local class
-std::vector<point> {
+std::vector<point> points {
   {0.1, 0.3},
   {3.1, 4,7},
   {55., 34.}
 };
+
+for (const auto& p : points)
+  cout << '(' << p.x << ',' << p.y << ')' << endl;
+\end{minted}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{\texttt{<array>}}
+
+\vspace{-5mm}
+
+\texttt{std::array} is like \texttt{std::vector}, but statically allocated and
+with the size a part of its type.
+
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+using p4 = std::array<double,4>; // can use it to represent 4-momentum
+std::vector<p4> particles; // will be contiguously allocated
+\end{minted}
+
+Other similar aggregate templates (statically allocated containers):
+\begin{itemize}
+  \item \texttt{std::pair<T1,T2>} -- 2 heterogenious types
+    \href{http://en.cppreference.com/w/cpp/utility/pair}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+  \item \texttt{std::tuple<Ts...>} -- $n$ heterogenious types
+    \href{http://en.cppreference.com/w/cpp/utility/tuple}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+  \item \texttt{std::array<T,N>} -- $n$ homogenious types
+    \href{http://en.cppreference.com/w/cpp/container/array}{
+      \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
+\end{itemize}
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{A contextual example}
+
+\vspace{-5mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+#include <unordered_map>
+
+#include <TFile.h>
+#include <TTreeReader.h>
+#include <TTreeReaderValue.h>
+
 \end{minted}
 \end{frame}
 
