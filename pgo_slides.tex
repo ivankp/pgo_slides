@@ -402,10 +402,69 @@ std::uniform_real_distribution<double> dist;
 TH1::AddDirectory(false);
 auto sample_mean = std::make_unique<TH1D>("sample_mean", "", 100, 0.0,
                                           1.0);
-for (std::size_t i = 0; i < 1'000'000; ++i) {
+for (std::size_t i = 0; i < 1000000; ++i) {
   auto sample = std::make_unique<TH1D>("sample", "", 100, 0.0, 1.0);
   for (std::size_t j = 0; j < 10; ++j) sample->Fill(dist(engine));
   sample_mean->Fill(sample->GetMean());
+}
+\end{minted}
+
+\begin{itemize}
+  \item See also \texttt{std::shared\_ptr} for shared ownership.
+\end{itemize}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Move semantics}
+  \toplink{http://en.cppreference.com/w/cpp/language/move_constructor}
+
+\begin{itemize}
+  \item Prevents unnecessary copying of dynamically allocated memory.
+  \item Compiling with \texttt{-std=c++11} or later turns these on
+        automatically in the standard library.
+\end{itemize}
+
+Example: return a \texttt{std::vector} from a function
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::vector<double> sample_dist(std::size_t n_samples) {
+  . . .
+}
+
+int main() {
+  auto samples = sample_dist(1000000);
+  . . .
+}
+\end{minted}
+
+\end{frame}
+
+% ===================================================================
+
+\begin{frame}[fragile=singleslide]
+\frametitle{Move semantics}
+  \toplink{http://en.cppreference.com/w/cpp/language/move_constructor}
+
+\begin{itemize}
+  \item Combine with \texttt{std::unique\_ptr} for safe, portable dynamic
+        memory.
+\end{itemize}
+
+Example: function that generates distributions
+\vspace{-3mm}
+\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
+std::unique_ptr<TH1D> sample_dist(std::size_t n_samples) {
+  auto hist = std::make_unique<TH1D>("hist", "", 100, 0.0, 1.0);
+  . . .
+  return hist;
+}
+
+int main() {
+  auto hist = sample_dist(1000000);
+  . . .
 }
 \end{minted}
 
@@ -505,13 +564,13 @@ std::vector<p4> particles; // will be contiguously allocated
 
 Other similar aggregate templates (statically allocated containers):
 \begin{itemize}
-  \item \texttt{std::pair<T1,T2>} -- 2 heterogenious types
+  \item \texttt{std::pair<T1,T2>} -- 2 heterogeneous types
     \href{http://en.cppreference.com/w/cpp/utility/pair}{
       \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
-  \item \texttt{std::tuple<Ts...>} -- $n$ heterogenious types
+  \item \texttt{std::tuple<Ts...>} -- $n$ heterogeneous types
     \href{http://en.cppreference.com/w/cpp/utility/tuple}{
       \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
-  \item \texttt{std::array<T,N>} -- $n$ homogenious types
+  \item \texttt{std::array<T,N>} -- $n$ homogeneous types
     \href{http://en.cppreference.com/w/cpp/container/array}{
       \raisebox{-.08\height}{\includegraphics[width=9px]{fig/link.pdf}}}
 \end{itemize}
@@ -556,33 +615,6 @@ Other similar aggregate templates (statically allocated containers):
   \href{https://github.com/ivankp/pgo_cxx/blob/master/src/minuit.cc}
   {Link to the code}
 \end{center}
-
-\end{frame}
-
-% ===================================================================
-
-\begin{frame}[fragile=singleslide]
-\frametitle{Move semantics}
-  \toplink{http://en.cppreference.com/w/cpp/language/move_constructor}
-
-\begin{itemize}
-  \item Prevents unnecessary copying of dynamically allocated memory.
-  \item Compiling with \texttt{-std=c++11} or later turns these on
-        automatically in the standard library.
-\end{itemize}
-
-Example: return a \texttt{std::vector} from a function
-\vspace{-3mm}
-\begin{minted}[mathescape,fontsize=\footnotesize,frame=lines]{cpp}
-std::vector<double> sample_dist(std::size_t n_samples) {
-  . . .
-}
-
-int main() {
-  auto samples = sample_dist(1000000);
-  . . .
-}
-\end{minted}
 
 \end{frame}
 
